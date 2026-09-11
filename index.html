@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>連帯保SHOWTIME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Bebas+Neue&family=Orbitron:wght@700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base: #ece5d4;
+    --grout: rgba(0,0,0,0.06);
+    --panel: #1d1712;
+    --panel-border: #3d3122;
+    --plaque: #0f0b09;
+    --plaque-edge: #3a2418;
+    --gold: #b8912f;
+    --gold-bright: #e0b84a;
+    --red: #c21c22;
+    --red-deep: #4a0000;
+    --text-main: #ece6da;
+    --text-soft: #8f8474;
+    --ink-onlight: #362d21;
+    --loss-color: #d4555a;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body{
+    margin: 0;
+    color: var(--text-main);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    background-color: var(--bg-base);
+    background-image:
+      linear-gradient(335deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(155deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(335deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(155deg, var(--grout) 23px, transparent 23px);
+    background-size: 58px 58px;
+    background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+  }
+
+  .wrap{ max-width: 560px; margin: 0 auto; }
+
+  #app{ display: none; }
+
+  /* ---------- Language switcher ---------- */
+  .lang-switch{
+    position: fixed;
+    top: 12px; right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 50;
+  }
+  .lang-switch button{
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text-soft);
+    font-size: 11px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-switch button.active{ color: var(--gold-bright); border-color: var(--gold); }
+
+  /* ---------- Language select screen ---------- */
+  .lang-screen{
+    position: fixed;
+    inset: 0;
+    background: var(--bg-base);
+    background-image:
+      linear-gradient(335deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(155deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(335deg, var(--grout) 23px, transparent 23px),
+      linear-gradient(155deg, var(--grout) 23px, transparent 23px);
+    background-size: 58px 58px;
+    background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .lang-box{ text-align: center; max-width: 380px; width: 100%; }
+  .lang-box .title-mark{
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 800;
+    font-size: clamp(15px, 6vw, 36px);
+    color: var(--red);
+    text-align: center;
+    white-space: nowrap;
+    text-shadow:
+      1px 1px 0 var(--red-deep), 2px 2px 0 var(--red-deep), 3px 3px 0 var(--red-deep),
+      0 0 14px rgba(224,184,74,0.6), 0 0 30px rgba(224,184,74,0.3);
+    margin: 0 0 6px;
+  }
+  .lang-box .sub{ color: var(--ink-onlight); font-size: 13px; margin: 0 0 26px; opacity: 0.8; }
+  .lang-options{ display: flex; flex-direction: column; gap: 10px; }
+  .lang-options button{
+    padding: 15px 0;
+    border-radius: 10px;
+    border: 1.5px solid var(--panel-border);
+    background: var(--panel);
+    color: var(--text-main);
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .lang-options button:active{ border-color: var(--gold); color: var(--gold-bright); }
+
+  /* ---------- Logo / Hero ---------- */
+  .logo-block{ text-align: center; margin-bottom: 22px; }
+
+  .logo{
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 800;
+    font-size: clamp(15px, 6.5vw, 44px);
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--red);
+    text-align: center;
+    white-space: nowrap;
+    animation: logoGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes logoGlow{
+    0%, 100%{
+      text-shadow:
+        1px 1px 0 var(--red-deep), 2px 2px 0 var(--red-deep), 3px 3px 0 var(--red-deep),
+        4px 4px 2px rgba(0,0,0,0.5),
+        0 0 10px rgba(224,184,74,0.55), 0 0 22px rgba(224,184,74,0.3);
+    }
+    50%{
+      text-shadow:
+        1px 1px 0 var(--red-deep), 2px 2px 0 var(--red-deep), 3px 3px 0 var(--red-deep),
+        4px 4px 2px rgba(0,0,0,0.5),
+        0 0 16px rgba(224,184,74,0.85), 0 0 34px rgba(224,184,74,0.5);
+    }
+  }
+  .flourish{ color: var(--gold); font-size: 14px; letter-spacing: 0.4em; margin: 8px 0; opacity: 0.85; }
+  .tagline{ font-size: 13px; color: var(--ink-onlight); margin: 0; }
+
+  /* ---------- Debt plaque ---------- */
+  .plaque{
+    margin-top: 22px;
+    background: linear-gradient(180deg, #1a120d, var(--plaque));
+    border: 2px solid var(--plaque-edge);
+    border-radius: 14px;
+    padding: 22px 18px 24px;
+    box-shadow: 0 16px 34px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(184,145,47,0.2);
+    text-align: center;
+    position: relative;
+  }
+  .plaque .label{ font-size: 12.5px; color: var(--gold); letter-spacing: 0.25em; margin: 0 0 10px; }
+  .plaque .amount-row{ display: flex; align-items: baseline; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .plaque .currency{
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(18px, 5vw, 26px);
+    color: var(--red); text-shadow: 0 0 10px rgba(194,28,34,0.6);
+  }
+  .plaque .amount{
+    font-family: 'Orbitron', 'Bebas Neue', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 9.5vw, 46px);
+    letter-spacing: 0.03em;
+    background: linear-gradient(180deg, #fbfbfb 0%, #cdd2d6 22%, #8d9298 46%, #52575c 72%, #24272a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,0,0,0.4);
+    text-shadow:
+      0 1px 0 rgba(255,255,255,0.55),
+      0 -1px 1px rgba(0,0,0,0.6),
+      0 3px 3px rgba(0,0,0,0.75),
+      0 0 22px rgba(194,28,34,0.35);
+    transition: text-shadow 0.3s;
+  }
+  .plaque .amount.pulse{
+    text-shadow:
+      0 1px 0 rgba(255,255,255,0.7),
+      0 -1px 1px rgba(0,0,0,0.6),
+      0 3px 3px rgba(0,0,0,0.75),
+      0 0 18px rgba(224,184,74,0.9),
+      0 0 36px rgba(224,184,74,0.5);
+  }
+  .plaque .amount.settle{ animation: debtSettle 0.42s cubic-bezier(.36,1.6,.4,1); }
+  @keyframes debtSettle{
+    0%{ transform: scale(1); }
+    40%{ transform: scale(1.06); }
+    70%{ transform: scale(0.985); }
+    100%{ transform: scale(1); }
+  }
+  .plaque .unit{ font-size: 13px; color: var(--gold-bright); margin-top: 6px; opacity: 0.85; }
+
+  /* ---------- Card ---------- */
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    margin-top: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  }
+  .card h2{
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 16px; font-weight: 900; margin: 0 0 12px; color: var(--text-main);
+  }
+  .step-num{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--red); color: #fff; font-size: 11.5px; font-weight: 700; margin-right: 8px;
+  }
+
+  input[type=text]{
+    width: 100%; padding: 13px 14px; border-radius: 10px;
+    border: 1.5px solid var(--panel-border); background: #14100c;
+    font-size: 15px; font-family: inherit; color: var(--text-main);
+  }
+  input[type=password]{
+    width: 100%; padding: 13px 14px; border-radius: 10px;
+    border: 1.5px solid var(--panel-border); background: #14100c;
+    font-size: 15px; font-family: inherit; color: var(--text-main);
+  }
+  input:focus{ outline: none; border-color: var(--gold); }
+  input::placeholder{ color: #635a4c; }
+
+  /* ---------- Numpad ---------- */
+  .amount-display{
+    background: #0f0b08; border: 1.5px solid var(--panel-border); border-radius: 10px;
+    padding: 14px; text-align: right; margin-bottom: 12px;
+  }
+  .amount-display .val{
+    font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--gold-bright);
+  }
+  .numpad{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .numpad button{
+    padding: 16px 0; border-radius: 10px; border: 1.5px solid var(--panel-border);
+    background: #14100c; color: var(--text-main); font-size: 18px; font-weight: 700;
+    font-family: 'Zen Kaku Gothic New', sans-serif; cursor: pointer;
+  }
+  .numpad button:active{ border-color: var(--gold); color: var(--gold-bright); }
+  .numpad button.wide{ font-size: 15px; }
+
+  .toggle{ display: flex; gap: 8px; margin-top: 4px; margin-bottom: 14px; }
+  .toggle button{
+    flex: 1; padding: 12px 0; border-radius: 10px; border: 1.5px solid var(--panel-border);
+    background: #14100c; font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer;
+    color: var(--text-soft);
+  }
+  .toggle button.active.win{ background: var(--gold); border-color: var(--gold); color: #1a1410; }
+  .toggle button.active.lose{ background: var(--red); border-color: var(--red); color: #fff; }
+
+  .submit-btn{
+    width: 100%; padding: 14px 0; border-radius: 10px; border: none;
+    background: var(--red); color: #f5efe0; font-family: inherit; font-size: 15.5px;
+    font-weight: 900; cursor: pointer; letter-spacing: 0.03em;
+  }
+  .submit-btn:disabled{ opacity: 0.5; }
+
+  .msg{ font-size: 13px; margin-top: 10px; min-height: 16px; }
+  .msg.error{ color: var(--loss-color); }
+  .msg.ok{ color: var(--gold-bright); }
+
+  /* ---------- Rankings ---------- */
+  .boards{ margin-top: 22px; display: grid; gap: 16px; }
+  @media (min-width: 700px){ .boards{ grid-template-columns: 1fr 1fr; } }
+  .board h2{
+    font-family: 'Shippori Mincho', serif; font-size: 19px; font-weight: 800;
+    margin: 0 0 12px; padding-left: 2px; color: var(--gold-bright);
+    letter-spacing: 0.06em;
+    -webkit-text-stroke: 0.9px rgba(20,14,8,0.75);
+    text-shadow:
+      -1px -1px 0 rgba(20,14,8,0.7), 1px -1px 0 rgba(20,14,8,0.7),
+      -1px 1px 0 rgba(20,14,8,0.7), 1px 1px 0 rgba(20,14,8,0.7),
+      0 2px 3px rgba(0,0,0,0.4),
+      0 0 10px rgba(224,184,74,0.4);
+  }
+  .list{ display: flex; flex-direction: column; gap: 8px; }
+  .entry{
+    display: flex; align-items: center; gap: 12px;
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 12px; padding: 10px 14px;
+  }
+  .rank{
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; width: 30px; height: 30px;
+    flex-shrink: 0; color: var(--text-soft); display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+  .entry:nth-child(1) .rank{
+    width: 34px; height: 34px; font-size: 18px; color: #3d2f00;
+    background: radial-gradient(circle at 35% 30%, #fff6d6, #e0b84a 55%, #96731c 100%);
+    box-shadow: 0 0 10px rgba(224,184,74,0.6);
+  }
+  .entry:nth-child(2) .rank{
+    width: 32px; height: 32px; font-size: 17px; color: #2b2b2b;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #b9bec2 55%, #797d80 100%);
+  }
+  .entry:nth-child(3) .rank{
+    width: 32px; height: 32px; font-size: 17px; color: #3a220e;
+    background: radial-gradient(circle at 35% 30%, #f3caa0, #b8703b 55%, #7a4522 100%);
+  }
+  .entry .name{ flex: 1; min-width: 0; font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
+  .entry .amt{
+    font-family: 'Orbitron', 'Bebas Neue', sans-serif; font-weight: 700; font-size: 17px; flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+  .board.win .entry .amt{
+    background: linear-gradient(180deg, #fff6d6, var(--gold-bright) 50%, #96731c 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-stroke: 0.5px rgba(30,22,12,0.55);
+    text-shadow: 0 0 10px rgba(224,184,74,0.35);
+  }
+  .board.lose .entry .amt{
+    background: linear-gradient(180deg, #ffb0b3, var(--loss-color) 55%, #6e1417 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-stroke: 0.5px rgba(30,10,10,0.55);
+    text-shadow: 0 0 10px rgba(212,85,90,0.35);
+  }
+
+  .empty-board{
+    text-align: center; padding: 20px 10px; color: var(--text-soft); font-size: 13px;
+    border: 1px dashed var(--panel-border); border-radius: 12px;
+  }
+
+  .reset-link{
+    display: block; text-align: center; margin-top: 28px; font-size: 12px;
+    color: var(--ink-onlight); background: none; border: none; text-decoration: underline;
+    cursor: pointer; font-family: inherit; opacity: 0.75;
+  }
+  .note{ text-align: center; font-size: 11px; color: var(--ink-onlight); margin-top: 6px; opacity: 0.65; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+    display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px;
+  }
+  .modal-overlay.show{ display: flex; }
+  .modal-box{
+    background: var(--panel); border: 1.5px solid var(--panel-border);
+    border-radius: 16px; padding: 22px; max-width: 380px; width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  }
+  .modal-box h3{
+    font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 900; font-size: 17px;
+    margin: 0 0 14px; color: var(--gold-bright); text-align: center;
+  }
+  .modal-row{ display: flex; justify-content: space-between; font-size: 14.5px; padding: 8px 0; border-bottom: 1px solid var(--panel-border); }
+  .modal-row:last-of-type{ border-bottom: none; }
+  .modal-row .k{ color: var(--text-soft); }
+  .modal-row .v{ font-weight: 700; color: var(--text-main); }
+  .modal-row .v.win{ color: var(--gold-bright); }
+  .modal-row .v.lose{ color: var(--loss-color); }
+  .modal-buttons{ display: flex; gap: 10px; margin-top: 18px; }
+  .modal-buttons button{
+    flex: 1; padding: 12px 0; border-radius: 10px; border: 1.5px solid var(--panel-border);
+    font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; background: #14100c; color: var(--text-main);
+  }
+  .modal-buttons button.confirm{ background: var(--red); border-color: var(--red); color: #fff; }
+  .modal-error{ color: var(--loss-color); font-size: 13px; text-align: center; margin-top: 10px; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="lang-screen" id="langScreen">
+  <div class="lang-box">
+    <p class="title-mark">連帯保SHOWTIME</p>
+    <p class="sub" id="langSubText">言語を選択してください / Select Language / 언어를 선택하세요 / 请选择语言</p>
+    <div class="lang-options">
+      <button data-lang="ja">日本語</button>
+      <button data-lang="en">English</button>
+      <button data-lang="ko">한국어</button>
+      <button data-lang="zh">中文</button>
+    </div>
+  </div>
+</div>
+
+<div class="lang-switch" id="langSwitch"></div>
+
+<div class="wrap" id="app">
+
+  <div class="logo-block">
+    <p class="logo" id="logoText">連帯保SHOWTIME</p>
+    <p class="flourish">♠ ♥ ♦ ♣</p>
+    <p class="tagline" id="taglineText"></p>
+  </div>
+
+  <div class="plaque">
+    <p class="label" id="debtLabel"></p>
+    <div class="amount-row">
+      <span class="currency">$</span>
+      <span class="amount" id="debtAmount">10,000,000,000</span>
+    </div>
+    <p class="unit" id="debtUnit"></p>
+  </div>
+
+  <div class="boards">
+    <div class="board win">
+      <h2 id="winBoardTitle"></h2>
+      <div class="list" id="winList"></div>
+    </div>
+    <div class="board lose">
+      <h2 id="loseBoardTitle"></h2>
+      <div class="list" id="loseList"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">1</span><span id="step1Title"></span></h2>
+    <input type="text" id="nameInput" maxlength="20">
+  </div>
+
+  <div class="card">
+    <h2><span class="step-num">2</span><span id="step2Title"></span></h2>
+    <div class="amount-display"><span class="val" id="amountDisplay">0</span></div>
+    <div class="numpad" id="numpad"></div>
+    <div class="toggle">
+      <button type="button" id="winBtn" class="win"></button>
+      <button type="button" id="loseBtn" class="lose"></button>
+    </div>
+    <button class="submit-btn" id="submitBtn"></button>
+    <p class="msg" id="msg"></p>
+  </div>
+
+  <button class="reset-link" id="resetBtn"></button>
+  <p class="note" id="noteText"></p>
+
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 id="confirmTitle"></h3>
+    <div class="modal-row"><span class="k" id="confirmNameLabel"></span><span class="v" id="confirmNameVal"></span></div>
+    <div class="modal-row"><span class="k" id="confirmResultLabel"></span><span class="v" id="confirmResultVal"></span></div>
+    <div class="modal-row"><span class="k" id="confirmAmountLabel"></span><span class="v" id="confirmAmountVal"></span></div>
+    <div class="modal-buttons">
+      <button id="confirmCancelBtn"></button>
+      <button class="confirm" id="confirmOkBtn"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal-box">
+    <h3 id="pwTitle"></h3>
+    <input type="password" id="pwInput">
+    <p class="modal-error" id="pwError"></p>
+    <div class="modal-buttons">
+      <button id="pwCancelBtn"></button>
+      <button class="confirm" id="pwOkBtn"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'rentaiho-showtime-v1';
+const STARTING_DEBT = 10000000000;
+const RESET_PASSWORD = 'kokusai1d';
+
+const I18N = {
+  ja: {
+    logo: '連帯保SHOWTIME',
+    tagline: '生き延びろ！',
+    debtLabel: '残り借金',
+    debtUnit: '/ 借入当初 100億ドル',
+    step1Title: 'ニックネームを入力',
+    namePlaceholder: '例：カジノ太郎',
+    step2Title: '勝負の結果を記録',
+    win: '勝ち', lose: '負け', submit: '記録する',
+    winBoardTitle: '勝ち額ベスト10', loseBoardTitle: '負け額ワースト10',
+    emptyBoard: '記録がまだありません',
+    resetLink: 'すべての記録をリセットする',
+    note: 'この記録・借金カウンターは同じサイトを見ている全員に共有されます',
+    errName: 'ニックネームを入力してください',
+    errAmount: '金額を正しく入力してください',
+    recorded: '記録しました', resetDone: 'リセットしました',
+    confirmTitle: 'この内容で記録しますか？',
+    confirmName: 'ニックネーム', confirmResult: '結果', confirmAmount: '金額',
+    cancel: 'キャンセル', confirm: '記録する',
+    pwTitle: 'パスワードを入力してください',
+    pwWrong: 'パスワードが違います',
+    pwPlaceholder: 'パスワード',
+    pwCancel: 'キャンセル', pwOk: 'リセットする'
+  },
+  en: {
+    logo: 'Guarantor SHOWTIME',
+    tagline: 'Survive tonight!',
+    debtLabel: 'Remaining Debt',
+    debtUnit: '/ Started at $10,000,000,000',
+    step1Title: 'Enter Nickname',
+    namePlaceholder: 'e.g. Casino Joe',
+    step2Title: 'Record Result',
+    win: 'Win', lose: 'Lost', submit: 'Submit',
+    winBoardTitle: 'Top 10 Wins', loseBoardTitle: 'Top 10 Losses',
+    emptyBoard: 'No records yet',
+    resetLink: 'Reset All Records',
+    note: 'This counter and records are shared with everyone viewing this page',
+    errName: 'Please enter a nickname',
+    errAmount: 'Please enter a valid amount',
+    recorded: 'Recorded', resetDone: 'Reset complete',
+    confirmTitle: 'Confirm this record?',
+    confirmName: 'Nickname', confirmResult: 'Result', confirmAmount: 'Amount',
+    cancel: 'Cancel', confirm: 'Submit',
+    pwTitle: 'Enter Password',
+    pwWrong: 'Incorrect password',
+    pwPlaceholder: 'Password',
+    pwCancel: 'Cancel', pwOk: 'Reset'
+  },
+  ko: {
+    logo: '연대보쇼타임',
+    tagline: '살아남아라!',
+    debtLabel: '남은 빚',
+    debtUnit: '/ 최초 대출금 100억 달러',
+    step1Title: '닉네임 입력',
+    namePlaceholder: '예: 카지노왕',
+    step2Title: '결과 기록',
+    win: '승', lose: '패', submit: '기록하기',
+    winBoardTitle: '승리 금액 베스트10', loseBoardTitle: '패배 금액 워스트10',
+    emptyBoard: '아직 기록이 없습니다',
+    resetLink: '모든 기록 초기화',
+    note: '이 카운터와 기록은 이 페이지를 보는 모든 사람과 공유됩니다',
+    errName: '닉네임을 입력하세요',
+    errAmount: '금액을 올바르게 입력하세요',
+    recorded: '기록되었습니다', resetDone: '초기화되었습니다',
+    confirmTitle: '이 내용으로 기록할까요?',
+    confirmName: '닉네임', confirmResult: '결과', confirmAmount: '금액',
+    cancel: '취소', confirm: '기록하기',
+    pwTitle: '비밀번호를 입력하세요',
+    pwWrong: '비밀번호가 틀렸습니다',
+    pwPlaceholder: '비밀번호',
+    pwCancel: '취소', pwOk: '초기화'
+  },
+  zh: {
+    logo: '连带保SHOW TIME',
+    tagline: '生存下去！',
+    debtLabel: '剩余债务',
+    debtUnit: '/ 初始借款 100亿美元',
+    step1Title: '输入昵称',
+    namePlaceholder: '例：赌场小王',
+    step2Title: '记录结果',
+    win: '赢', lose: '输', submit: '记录',
+    winBoardTitle: '赢钱金额榜 前10', loseBoardTitle: '输钱金额榜 前10',
+    emptyBoard: '暂无记录',
+    resetLink: '重置所有记录',
+    note: '此计数器和记录与查看此页面的所有人共享',
+    errName: '请输入昵称',
+    errAmount: '请输入正确的金额',
+    recorded: '已记录', resetDone: '已重置',
+    confirmTitle: '确认记录以下内容？',
+    confirmName: '昵称', confirmResult: '结果', confirmAmount: '金额',
+    cancel: '取消', confirm: '记录',
+    pwTitle: '请输入密码',
+    pwWrong: '密码错误',
+    pwPlaceholder: '密码',
+    pwCancel: '取消', pwOk: '重置'
+  }
+};
+const LANG_LABELS = { ja: '日本語', en: 'EN', ko: '한국어', zh: '中文' };
+
+let lang = null;
+let mode = 'win';
+let amountDigits = '';
+let state = { debt: STARTING_DEBT, records: [] };
+let pendingRecord = null;
+
+const els = {};
+['debtAmount','nameInput','amountDisplay','numpad','winBtn','loseBtn','submitBtn','msg',
+ 'winList','loseList','resetBtn','logoText','taglineText','debtLabel','debtUnit',
+ 'step1Title','step2Title','winBoardTitle','loseBoardTitle','noteText',
+ 'confirmModal','confirmTitle','confirmNameLabel','confirmNameVal','confirmResultLabel','confirmResultVal',
+ 'confirmAmountLabel','confirmAmountVal','confirmCancelBtn','confirmOkBtn',
+ 'passwordModal','pwTitle','pwInput','pwError','pwCancelBtn','pwOkBtn','langScreen','langSwitch'
+].forEach(id => els[id] = document.getElementById(id));
+
+function t(key){ return I18N[lang][key]; }
+
+function buildLangSwitch(){
+  els.langSwitch.innerHTML = Object.keys(LANG_LABELS).map(code =>
+    `<button data-lang="${code}" class="${code === lang ? 'active' : ''}">${LANG_LABELS[code]}</button>`
+  ).join('');
+  els.langSwitch.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.lang));
+  });
+}
+
+function setLang(code){
+  lang = code;
+  els.langScreen.classList.remove('show');
+  els.langScreen.style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  applyI18n();
+  buildLangSwitch();
+}
+
+function applyI18n(){
+  els.logoText.textContent = t('logo');
+  els.taglineText.textContent = t('tagline');
+  els.debtLabel.textContent = t('debtLabel');
+  els.debtUnit.textContent = t('debtUnit');
+  els.step1Title.textContent = t('step1Title');
+  els.nameInput.placeholder = t('namePlaceholder');
+  els.step2Title.textContent = t('step2Title');
+  els.winBtn.textContent = t('win');
+  els.loseBtn.textContent = t('lose');
+  els.submitBtn.textContent = t('submit');
+  els.winBoardTitle.textContent = t('winBoardTitle');
+  els.loseBoardTitle.textContent = t('loseBoardTitle');
+  els.resetBtn.textContent = t('resetLink');
+  els.noteText.textContent = t('note');
+  els.confirmTitle.textContent = t('confirmTitle');
+  els.confirmNameLabel.textContent = t('confirmName');
+  els.confirmResultLabel.textContent = t('confirmResult');
+  els.confirmAmountLabel.textContent = t('confirmAmount');
+  els.confirmCancelBtn.textContent = t('cancel');
+  els.confirmOkBtn.textContent = t('confirm');
+  els.pwTitle.textContent = t('pwTitle');
+  els.pwInput.placeholder = t('pwPlaceholder');
+  els.pwCancelBtn.textContent = t('pwCancel');
+  els.pwOkBtn.textContent = t('pwOk');
+  render();
+}
+
+document.querySelectorAll('.lang-options button').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+function setMode(m){
+  mode = m;
+  els.winBtn.classList.toggle('active', m === 'win');
+  els.loseBtn.classList.toggle('active', m === 'lose');
+}
+els.winBtn.addEventListener('click', () => setMode('win'));
+els.loseBtn.addEventListener('click', () => setMode('lose'));
+setMode('win');
+
+function buildNumpad(){
+  const keys = ['1','2','3','4','5','6','7','8','9','⌫','0','00'];
+  els.numpad.innerHTML = keys.map(k => {
+    const wide = k === '⌫' || k === '00' ? ' wide' : '';
+    return `<button type="button" class="numkey${wide}" data-key="${k}">${k}</button>`;
+  }).join('');
+  els.numpad.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => onNumkey(btn.dataset.key));
+  });
+}
+buildNumpad();
+
+function onNumkey(key){
+  if(key === '⌫'){
+    amountDigits = amountDigits.slice(0, -1);
+  }else if(key === '00'){
+    if(amountDigits !== '' && amountDigits.length <= 7) amountDigits += '00';
+  }else{
+    if(amountDigits === '0') amountDigits = key;
+    else if(amountDigits.length < 9) amountDigits += key;
+  }
+  updateAmountDisplay();
+}
+function updateAmountDisplay(){
+  const n = amountDigits === '' ? 0 : parseInt(amountDigits, 10);
+  els.amountDisplay.textContent = n.toLocaleString('en-US');
+}
+
+function showMsg(text, type){
+  els.msg.textContent = text;
+  els.msg.className = 'msg' + (type ? ' ' + type : '');
+  if(text){
+    setTimeout(() => { if(els.msg.textContent === text){ els.msg.textContent=''; els.msg.className='msg'; } }, 2500);
+  }
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function animateDebt(from, to){
+  const duration = 1700;
+  const start = performance.now();
+  els.debtAmount.classList.add('pulse');
+  function step(now){
+    const tt = Math.min(1, (now - start) / duration);
+    // heavy deceleration: fast start, long slow settle at the end
+    const eased = 1 - Math.pow(1 - tt, 5);
+    const current = Math.round(from + (to - from) * eased);
+    els.debtAmount.textContent = current.toLocaleString('en-US');
+    if(tt < 1){ requestAnimationFrame(step); }
+    else{
+      els.debtAmount.textContent = to.toLocaleString('en-US');
+      els.debtAmount.classList.add('settle');
+      setTimeout(() => {
+        els.debtAmount.classList.remove('pulse');
+        els.debtAmount.classList.remove('settle');
+      }, 420);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+async function loadState(){
+  try{
+    const result = await window.storage.get(STORAGE_KEY, true);
+    state = result && result.value ? JSON.parse(result.value) : { debt: STARTING_DEBT, records: [] };
+  }catch(e){
+    state = { debt: STARTING_DEBT, records: [] };
+  }
+  els.debtAmount.textContent = state.debt.toLocaleString('en-US');
+  render();
+}
+async function saveState(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state), true);
+  }catch(e){
+    showMsg('Error', 'error');
+  }
+}
+
+function renderList(el, records){
+  if(records.length === 0){
+    el.innerHTML = `<div class="empty-board">${t('emptyBoard')}</div>`;
+    return;
+  }
+  el.innerHTML = records.map((r, i) => `
+    <div class="entry">
+      <div class="rank">${i + 1}</div>
+      <div class="name">${escapeHtml(r.name)}</div>
+      <div class="amt">${r.amount.toLocaleString('en-US')}</div>
+    </div>
+  `).join('');
+}
+
+function render(){
+  if(!lang) return;
+  const wins = state.records.filter(r => r.type === 'win').sort((a,b) => b.amount - a.amount).slice(0,10);
+  const losses = state.records.filter(r => r.type === 'lose').sort((a,b) => b.amount - a.amount).slice(0,10);
+  renderList(els.winList, wins);
+  renderList(els.loseList, losses);
+}
+
+/* ---------- Submit -> confirm modal ---------- */
+els.submitBtn.addEventListener('click', () => {
+  const name = els.nameInput.value.trim();
+  const rawAmount = amountDigits === '' ? 0 : parseInt(amountDigits, 10);
+
+  if(!name){ showMsg(t('errName'), 'error'); return; }
+  if(!rawAmount || rawAmount <= 0){ showMsg(t('errAmount'), 'error'); return; }
+
+  pendingRecord = { name, amount: rawAmount, type: mode };
+  els.confirmNameVal.textContent = name;
+  els.confirmResultVal.textContent = mode === 'win' ? t('win') : t('lose');
+  els.confirmResultVal.className = 'v ' + mode;
+  els.confirmAmountVal.textContent = '$' + rawAmount.toLocaleString('en-US');
+  els.confirmModal.classList.add('show');
+});
+
+els.confirmCancelBtn.addEventListener('click', () => {
+  els.confirmModal.classList.remove('show');
+});
+
+els.confirmOkBtn.addEventListener('click', async () => {
+  if(!pendingRecord) return;
+  const prevDebt = state.debt;
+  state.debt += pendingRecord.type === 'win' ? -pendingRecord.amount : pendingRecord.amount;
+  state.records.push(pendingRecord);
+  await saveState();
+  render();
+  animateDebt(prevDebt, state.debt);
+  showMsg(t('recorded'), 'ok');
+
+  els.nameInput.value = '';
+  amountDigits = '';
+  updateAmountDisplay();
+  pendingRecord = null;
+  els.confirmModal.classList.remove('show');
+});
+
+/* ---------- Reset -> password modal ---------- */
+els.resetBtn.addEventListener('click', () => {
+  els.pwInput.value = '';
+  els.pwError.textContent = '';
+  els.passwordModal.classList.add('show');
+  setTimeout(() => els.pwInput.focus(), 50);
+});
+els.pwCancelBtn.addEventListener('click', () => {
+  els.passwordModal.classList.remove('show');
+});
+els.pwOkBtn.addEventListener('click', async () => {
+  if(els.pwInput.value !== RESET_PASSWORD){
+    els.pwError.textContent = t('pwWrong');
+    return;
+  }
+  const prevDebt = state.debt;
+  state = { debt: STARTING_DEBT, records: [] };
+  await saveState();
+  render();
+  animateDebt(prevDebt, state.debt);
+  showMsg(t('resetDone'), 'ok');
+  els.passwordModal.classList.remove('show');
+});
+
+loadState();
+</script>
+</body>
+</html>
